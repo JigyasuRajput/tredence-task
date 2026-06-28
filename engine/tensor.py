@@ -4,9 +4,26 @@ from __future__ import annotations
 
 import numpy as np
 
-# Everything would run in float64. Gradient checking needs the precision, and
-# the models here are tiny, so we never pay for it.
+# Everything runs in float64. Gradient checking needs the precision, and the
+# models here are tiny, so we never pay for it.
 DEFAULT_DTYPE = np.float64
+
+
+def _unbroadcast(grad, shape):
+    """Sum a gradient back down to `shape`, undoing any broadcasting in the forward op."""
+    # NumPy broadcasting can (1) prepend new axes and (2) stretch size-1 axes.
+    # Reverse both by summing: first the extra leading axes, then the stretched ones.
+    while grad.ndim > len(shape):
+        grad = grad.sum(axis=0)
+    for axis, dim in enumerate(shape):
+        if dim == 1 and grad.shape[axis] != 1:
+            grad = grad.sum(axis=axis, keepdims=True)
+    return grad
+
+
+def _as_tensor(x):
+    """Wrap a scalar or array as a constant Tensor; pass an existing Tensor through."""
+    return x if isinstance(x, Tensor) else Tensor(x)
 
 
 class Tensor:
@@ -15,8 +32,8 @@ class Tensor:
     def __init__(self, data, requires_grad=False, _children=(), _op=""):
         self.data = np.asarray(data, dtype=DEFAULT_DTYPE)
         self.requires_grad = bool(requires_grad)
-        # Gradients accumulate into here (Trap E); they start at zero and the
-        # backward pass re-zeros the whole graph before each run.
+        # Gradients accumulate into here; they start at zero and the backward
+        # pass re-zeros the whole graph before each run.
         self.grad = np.zeros_like(self.data)
         # Graph bookkeeping: who fed into me, what op made me, and the closure
         # that pushes my grad back to my parents. Ops fill the closure in; a
@@ -45,6 +62,86 @@ class Tensor:
     def zero_grad(self):
         """Reset this tensor's accumulated gradient back to zero."""
         self.grad = np.zeros_like(self.data)
+
+    # -- elementwise ops --
+    # Each op forwards with NumPy and installs a closure that routes the upstream
+    # grad to its parents, summing back over any axes NumPy broadcast.
+    def __add__(self, other):
+        other = _as_tensor(other)
+        out = Tensor(self.data + other.data,
+                     requires_grad=self.requires_grad or other.requires_grad,
+                     _children=(self, other), _op="+")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += _unbroadcast(out.grad, self.shape)
+            if other.requires_grad:
+                other.grad += _unbroadcast(out.grad, other.shape)
+
+        out._backward = _backward
+        return out
+
+    def __sub__(self, other):
+        other = _as_tensor(other)
+        out = Tensor(self.data - other.data,
+                     requires_grad=self.requires_grad or other.requires_grad,
+                     _children=(self, other), _op="-")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += _unbroadcast(out.grad, self.shape)
+            if other.requires_grad:
+                other.grad += _unbroadcast(-out.grad, other.shape)
+
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        other = _as_tensor(other)
+        out = Tensor(self.data * other.data,
+                     requires_grad=self.requires_grad or other.requires_grad,
+                     _children=(self, other), _op="*")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += _unbroadcast(out.grad * other.data, self.shape)
+            if other.requires_grad:
+                other.grad += _unbroadcast(out.grad * self.data, other.shape)
+
+        out._backward = _backward
+        return out
+
+    def __truediv__(self, other):
+        other = _as_tensor(other)
+        out = Tensor(self.data / other.data,
+                     requires_grad=self.requires_grad or other.requires_grad,
+                     _children=(self, other), _op="/")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += _unbroadcast(out.grad / other.data, self.shape)
+            if other.requires_grad:
+                other.grad += _unbroadcast(
+                    -out.grad * self.data / (other.data ** 2), other.shape)
+
+        out._backward = _backward
+        return out
+
+    def __neg__(self):
+        return self * -1.0
+
+    # Reflected forms so `scalar + tensor`, `scalar - tensor`, etc. also work.
+    def __radd__(self, other):
+        return self + other
+
+    def __rmul__(self, other):
+        return self * other
+
+    def __rsub__(self, other):
+        return _as_tensor(other) - self
+
+    def __rtruediv__(self, other):
+        return _as_tensor(other) / self
 
     def __repr__(self):
         op = f", op={self._op!r}" if self._op else ""
