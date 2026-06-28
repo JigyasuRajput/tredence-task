@@ -31,15 +31,24 @@ pip install -r requirements.txt
 ## Run
 
 ```bash
-uv run pytest                          # the test suite (gradient checks live here)
-uv run python -m engine.gradcheck      # per-op finite-difference report
-uv run python -m train.train_mlp       # train the MLP, save the learning curve
-uv run python -m train.prune_run       # self-prune to a target sparsity
-uv run python -m train.pareto_run      # multi-seed sparsity sweep + Pareto plot
+uv run pytest                              # the whole test suite
+uv run pytest tests/test_gradcheck.py      # gradient-check every op vs finite differences
+uv run pytest tests/test_masked_weight.py  # masked-weight correctness (pruned weights stay zero)
+uv run python -m engine.gradcheck          # per-op finite-difference report
+uv run python -m train.train_mlp           # train the MLP, save the learning curve
+uv run python -m train.prune_run           # self-prune to a target sparsity
+uv run python -m train.pareto_run          # multi-seed sparsity sweep + Pareto plot
 ```
 
 Every run fixes its seeds, so the committed numbers in `results/` reproduce from a
 clean clone.
+
+## Dataset
+
+sklearn's `load_digits` — 1,797 8×8 handwritten digits, 10 classes. Small and real:
+it trains in seconds, so a multi-seed sparsity sweep is cheap to reproduce, yet the
+~9.5k-weight MLP is large enough that 90% pruning is meaningful. sklearn hands over
+the raw arrays only; the shuffle, split, and standardization are NumPy.
 
 ## Results
 

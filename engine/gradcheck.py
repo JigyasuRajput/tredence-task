@@ -89,7 +89,7 @@ def standard_cases():
         ("mean (axis)", lambda a: obj(a.mean(axis=1), 7), [p((4, 3), 21)]),
         ("relu", lambda a: obj(a.relu(), 8), [p((4, 5), 22)]),
         ("tanh", lambda a: obj(a.tanh(), 9), [p((4, 5), 23)]),
-        ("softmax cross-entropy", lambda l: softmax_cross_entropy(l, targets), [p((5, 4), 24)]),
+        ("softmax cross-entropy", lambda z: softmax_cross_entropy(z, targets), [p((5, 4), 24)]),
     ]
 
 

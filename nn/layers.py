@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from engine import Tensor
-
 from .init import init_weight
 from .parameter import Parameter
 

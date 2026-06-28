@@ -1,7 +1,5 @@
 """The sweep harness: hits targets, reproduces exactly, and summarizes correctly."""
 
-import numpy as np
-
 from train.sweep import pareto_sweep, run_one, summarize
 
 

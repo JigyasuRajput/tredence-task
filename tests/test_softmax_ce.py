@@ -48,4 +48,4 @@ def test_softmax_ce_grad_matches_finite_differences():
     rng = np.random.default_rng(2)
     targets = np.array([0, 2, 1, 0, 3])
     logits = Tensor(rng.standard_normal((5, 4)), requires_grad=True)
-    check_single_op(lambda l: softmax_cross_entropy(l, targets), [logits])
+    check_single_op(lambda z: softmax_cross_entropy(z, targets), [logits])
