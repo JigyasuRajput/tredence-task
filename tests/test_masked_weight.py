@@ -8,8 +8,8 @@ both re-assert the mask and clear the optimizer state on dead connections.
 
 import numpy as np
 
-from engine import Tensor
-from nn import Parameter
+from engine import Tensor, softmax_cross_entropy
+from nn import Adam, Linear, Parameter, SGD
 
 DEAD = [(0, 1), (1, 3), (3, 4)]
 
@@ -102,3 +102,47 @@ def test_dead_state_does_not_leak_into_live_weights():
     assert np.allclose(Wa.data[live], Wb.data[live])
     assert np.all(Wa.data[~live] == 0.0)
     assert np.all(Wb.data[~live] == 0.0)
+
+
+def test_real_adam_keeps_pruned_weight_and_moments_at_zero():
+    # The same guarantee, but driven by the shipped Adam (not the toy loop above):
+    # prune a connection that already carries warm moments, then assert it stays a
+    # hard zero and its Adam moments stay zero at every subsequent step.
+    rng = np.random.default_rng(7)
+    layer = Linear(4, 3, rng=rng)
+    opt = Adam(layer.parameters(), lr=0.05)
+    X = Tensor(rng.standard_normal((10, 4)))
+    y = rng.integers(0, 3, size=10)
+    for _ in range(15):
+        softmax_cross_entropy(layer(X), y).backward()
+        opt.step()
+
+    layer.weight.mask[0, 0] = 0.0
+    layer.weight.apply_mask()
+    idx = opt.params.index(layer.weight)
+    for _ in range(20):
+        softmax_cross_entropy(layer(X), y).backward()
+        opt.step()
+        assert layer.weight.data[0, 0] == 0.0
+        assert opt.m[idx][0, 0] == 0.0
+        assert opt.v[idx][0, 0] == 0.0
+
+
+def test_real_sgd_keeps_pruned_weight_and_velocity_at_zero():
+    rng = np.random.default_rng(8)
+    layer = Linear(4, 3, rng=rng)
+    opt = SGD(layer.parameters(), lr=0.1, momentum=0.9)
+    X = Tensor(rng.standard_normal((10, 4)))
+    y = rng.integers(0, 3, size=10)
+    for _ in range(15):
+        softmax_cross_entropy(layer(X), y).backward()
+        opt.step()
+
+    layer.weight.mask[0, 0] = 0.0
+    layer.weight.apply_mask()
+    idx = opt.params.index(layer.weight)
+    for _ in range(20):
+        softmax_cross_entropy(layer(X), y).backward()
+        opt.step()
+        assert layer.weight.data[0, 0] == 0.0
+        assert opt.velocity[idx][0, 0] == 0.0
