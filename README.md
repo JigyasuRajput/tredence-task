@@ -70,5 +70,6 @@ budget gets tight, where the magnitude baseline is the stronger choice on this
 task. Re-running `train.pareto_run` reproduces these numbers exactly.
 
 The cost is genuine, not dense-times-zero: at 90% sparsity the model keeps 947 of
-9,472 weights and the weight matmuls do 10× fewer multiply-adds, with a
+9,472 weights and the weight matmuls do 10× fewer multiply-adds — `active_params`,
+`total_params`, and `mac_reduction` committed in `results/part3_pruning.json` — with a
 sparse-aware forward (`train/cost.py`) that matches the dense output.

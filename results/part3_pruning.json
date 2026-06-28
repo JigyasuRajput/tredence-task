@@ -5,6 +5,9 @@
   "dense_test_acc": 0.9805013927576601,
   "pruned_test_acc": 0.9888579387186629,
   "accuracy_cost": -0.00835654596100277,
+  "active_params": 947,
+  "total_params": 9472,
+  "mac_reduction": 10.002111932418163,
   "loss": [
     0.7132175351773299,
     0.10155570141599879,

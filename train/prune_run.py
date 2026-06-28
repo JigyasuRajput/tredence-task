@@ -10,6 +10,7 @@ import numpy as np
 
 from nn import Adam
 from prune import Pruner, prunable_weights, saliency
+from train.cost import measure_cost
 from train.data import load_digits_data
 from train.loop import train
 from train.model import build_mlp
@@ -38,12 +39,16 @@ def main(seed=0, final_sparsity=0.9, epochs=40, lr=0.01):
                         epochs=epochs, seed=seed)
     pruned_acc = hist["test_acc"][-1]
     achieved = pruner.sparsity()
+    cost = measure_cost(model, n_samples=len(X_test))
 
     RESULTS.mkdir(exist_ok=True)
     with open(RESULTS / "part3_pruning.json", "w") as f:
         json.dump({"seed": seed, "target_sparsity": final_sparsity,
                    "achieved_sparsity": achieved, "dense_test_acc": dense_acc,
                    "pruned_test_acc": pruned_acc, "accuracy_cost": dense_acc - pruned_acc,
+                   "active_params": cost["active_params"],
+                   "total_params": cost["total_params"],
+                   "mac_reduction": cost["mac_reduction"],
                    **hist}, f, indent=2)
 
     print(f"dense test acc {dense_acc:.4f}  ->  "
