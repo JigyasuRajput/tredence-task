@@ -1,0 +1,479 @@
+{
+  "sparsities": [
+    0.0,
+    0.5,
+    0.75,
+    0.9,
+    0.95
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "epochs": 30,
+  "runs": [
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.0,
+      "seed": 0,
+      "test_acc": 0.9805013927576601,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.5,
+      "seed": 0,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.75,
+      "seed": 0,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.9,
+      "seed": 0,
+      "test_acc": 0.9805013927576601,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.95,
+      "seed": 0,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.0,
+      "seed": 0,
+      "test_acc": 0.9805013927576601,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.5,
+      "seed": 0,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.75,
+      "seed": 0,
+      "test_acc": 0.9832869080779945,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.9,
+      "seed": 0,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.95,
+      "seed": 0,
+      "test_acc": 0.9665738161559888,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.0,
+      "seed": 1,
+      "test_acc": 0.9554317548746518,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.5,
+      "seed": 1,
+      "test_acc": 0.9554317548746518,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.75,
+      "seed": 1,
+      "test_acc": 0.9610027855153204,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.9,
+      "seed": 1,
+      "test_acc": 0.9693593314763231,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.95,
+      "seed": 1,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.0,
+      "seed": 1,
+      "test_acc": 0.9554317548746518,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.5,
+      "seed": 1,
+      "test_acc": 0.9665738161559888,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.75,
+      "seed": 1,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.9,
+      "seed": 1,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.95,
+      "seed": 1,
+      "test_acc": 0.9610027855153204,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.0,
+      "seed": 2,
+      "test_acc": 0.9693593314763231,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.5,
+      "seed": 2,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.75,
+      "seed": 2,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.9,
+      "seed": 2,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.95,
+      "seed": 2,
+      "test_acc": 0.9637883008356546,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.0,
+      "seed": 2,
+      "test_acc": 0.9693593314763231,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.5,
+      "seed": 2,
+      "test_acc": 0.9805013927576601,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.75,
+      "seed": 2,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.9,
+      "seed": 2,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.95,
+      "seed": 2,
+      "test_acc": 0.9526462395543176,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.0,
+      "seed": 3,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.5,
+      "seed": 3,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.75,
+      "seed": 3,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.9,
+      "seed": 3,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.95,
+      "seed": 3,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.0,
+      "seed": 3,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.5,
+      "seed": 3,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.75,
+      "seed": 3,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.9,
+      "seed": 3,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.95,
+      "seed": 3,
+      "test_acc": 0.958217270194986,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.0,
+      "seed": 4,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.5,
+      "seed": 4,
+      "test_acc": 0.9832869080779945,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.75,
+      "seed": 4,
+      "test_acc": 0.9749303621169917,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.9,
+      "seed": 4,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "magnitude",
+      "target_sparsity": 0.95,
+      "seed": 4,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.0,
+      "seed": 4,
+      "test_acc": 0.9777158774373259,
+      "achieved_sparsity": 0.0,
+      "mac_reduction": 1.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.5,
+      "seed": 4,
+      "test_acc": 0.9860724233983287,
+      "achieved_sparsity": 0.5,
+      "mac_reduction": 2.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.75,
+      "seed": 4,
+      "test_acc": 0.9832869080779945,
+      "achieved_sparsity": 0.75,
+      "mac_reduction": 4.0
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.9,
+      "seed": 4,
+      "test_acc": 0.9693593314763231,
+      "achieved_sparsity": 0.9000211148648649,
+      "mac_reduction": 10.002111932418163
+    },
+    {
+      "method": "saliency",
+      "target_sparsity": 0.95,
+      "seed": 4,
+      "test_acc": 0.9721448467966574,
+      "achieved_sparsity": 0.9499577702702703,
+      "mac_reduction": 19.9831223628692
+    }
+  ],
+  "summary": {
+    "magnitude@0.0": {
+      "mean": 0.9721448467966575,
+      "std": 0.009154137451339814,
+      "n": 5
+    },
+    "magnitude@0.5": {
+      "mean": 0.9727019498607243,
+      "std": 0.009388467713845532,
+      "n": 5
+    },
+    "magnitude@0.75": {
+      "mean": 0.9715877437325906,
+      "std": 0.005401314604363601,
+      "n": 5
+    },
+    "magnitude@0.9": {
+      "mean": 0.9760445682451253,
+      "std": 0.003778456815111552,
+      "n": 5
+    },
+    "magnitude@0.95": {
+      "mean": 0.9715877437325904,
+      "std": 0.004456824512534821,
+      "n": 5
+    },
+    "saliency@0.0": {
+      "mean": 0.9721448467966575,
+      "std": 0.009154137451339814,
+      "n": 5
+    },
+    "saliency@0.5": {
+      "mean": 0.977158774373259,
+      "std": 0.006448934207682584,
+      "n": 5
+    },
+    "saliency@0.75": {
+      "mean": 0.9777158774373259,
+      "std": 0.004661058643643885,
+      "n": 5
+    },
+    "saliency@0.9": {
+      "mean": 0.9727019498607241,
+      "std": 0.0020844887948601506,
+      "n": 5
+    },
+    "saliency@0.95": {
+      "mean": 0.9621169916434539,
+      "std": 0.006731501935150155,
+      "n": 5
+    }
+  },
+  "claim": {
+    "sparsity": 0.95,
+    "mean_delta": -0.00947075208913648,
+    "std_delta": 0.006496882334089475,
+    "stderr": 0.0029054941081683126,
+    "n": 5,
+    "distinguishable_from_noise": true
+  }
+}
