@@ -3,24 +3,7 @@
 import numpy as np
 
 from engine import Tensor
-
-
-def numeric_grad(f, x, eps=1e-6):
-    """Central-difference gradient of scalar f at array x."""
-    x = np.array(x, dtype=np.float64)  # ensure a mutable ndarray, even for 0-d
-    grad = np.zeros_like(x)
-    it = np.nditer(x, flags=["multi_index"])
-    while not it.finished:
-        idx = it.multi_index
-        orig = x[idx]
-        x[idx] = orig + eps
-        plus = f(x)
-        x[idx] = orig - eps
-        minus = f(x)
-        x[idx] = orig
-        grad[idx] = (plus - minus) / (2 * eps)
-        it.iternext()
-    return grad
+from grad_helpers import numeric_grad
 
 
 def check_binary(op_tensor, op_numpy, a_shape, b_shape, seed=0):

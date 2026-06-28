@@ -143,6 +143,60 @@ class Tensor:
     def __rtruediv__(self, other):
         return _as_tensor(other) / self
 
+    # -- matmul and reductions --
+    def __matmul__(self, other):
+        # Targets the 2-D (batch, features) @ (features, units) case the MLP uses.
+        other = _as_tensor(other)
+        out = Tensor(self.data @ other.data,
+                     requires_grad=self.requires_grad or other.requires_grad,
+                     _children=(self, other), _op="@")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += out.grad @ other.data.T
+            if other.requires_grad:
+                other.grad += self.data.T @ out.grad
+
+        out._backward = _backward
+        return out
+
+    def sum(self, axis=None, keepdims=False):
+        out = Tensor(self.data.sum(axis=axis, keepdims=keepdims),
+                     requires_grad=self.requires_grad,
+                     _children=(self,), _op="sum")
+
+        def _backward():
+            if self.requires_grad:
+                g = out.grad
+                # Put back the axes we collapsed, then broadcast the grad over them.
+                if axis is not None and not keepdims:
+                    g = np.expand_dims(g, axis)
+                self.grad += np.ones_like(self.data) * g
+
+        out._backward = _backward
+        return out
+
+    def mean(self, axis=None, keepdims=False):
+        out = Tensor(self.data.mean(axis=axis, keepdims=keepdims),
+                     requires_grad=self.requires_grad,
+                     _children=(self,), _op="mean")
+        # Each input contributed 1/n to the average, so the grad is scaled by 1/n.
+        if axis is None:
+            n = self.data.size
+        else:
+            axes = (axis,) if isinstance(axis, int) else tuple(axis)
+            n = int(np.prod([self.data.shape[ax] for ax in axes]))
+
+        def _backward():
+            if self.requires_grad:
+                g = out.grad
+                if axis is not None and not keepdims:
+                    g = np.expand_dims(g, axis)
+                self.grad += np.ones_like(self.data) * g / n
+
+        out._backward = _backward
+        return out
+
     def __repr__(self):
         op = f", op={self._op!r}" if self._op else ""
         return f"Tensor(shape={self.shape}, requires_grad={self.requires_grad}{op})"
