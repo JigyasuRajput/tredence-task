@@ -197,6 +197,30 @@ class Tensor:
         out._backward = _backward
         return out
 
+    # -- activations ----
+    def relu(self):
+        out = Tensor(np.maximum(self.data, 0.0),
+                     requires_grad=self.requires_grad, _children=(self,), _op="relu")
+
+        def _backward():
+            if self.requires_grad:
+                # Subgradient at exactly 0 is taken as 0 (strict >).
+                self.grad += (self.data > 0.0) * out.grad
+
+        out._backward = _backward
+        return out
+
+    def tanh(self):
+        t = np.tanh(self.data)
+        out = Tensor(t, requires_grad=self.requires_grad, _children=(self,), _op="tanh")
+
+        def _backward():
+            if self.requires_grad:
+                self.grad += (1.0 - t * t) * out.grad
+
+        out._backward = _backward
+        return out
+
     def __repr__(self):
         op = f", op={self._op!r}" if self._op else ""
         return f"Tensor(shape={self.shape}, requires_grad={self.requires_grad}{op})"
