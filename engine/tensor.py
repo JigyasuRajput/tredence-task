@@ -221,6 +221,30 @@ class Tensor:
         out._backward = _backward
         return out
 
+    # -- reverse-mode autodiff -----
+    def backward(self):
+        """Run backprop from this node (usually a scalar loss), seeding its grad with ones."""
+        topo = []
+        visited = set()
+
+        def visit(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    visit(child)
+                topo.append(v)
+
+        visit(self)
+        # Zero every grad in the graph first, so a previous backward can't leak
+        # in, then accumulate within this pass as the closures run.
+        for v in topo:
+            v.grad = np.zeros_like(v.data)
+        self.grad = np.ones_like(self.data)
+        # Reverse topological order: a node runs only after all its consumers
+        # have already added their contributions to its grad.
+        for v in reversed(topo):
+            v._backward()
+
     def __repr__(self):
         op = f", op={self._op!r}" if self._op else ""
         return f"Tensor(shape={self.shape}, requires_grad={self.requires_grad}{op})"
