@@ -82,3 +82,24 @@ def test_saliency_pruning_on_a_real_model():
     assert pr.n_pruned() == round(0.75 * 32)
     for w in pr.weights:
         assert np.all(w.data[w.mask == 0.0] == 0.0)
+
+
+def test_saliency_and_magnitude_select_different_masks():
+    # Crafted so the criteria disagree: the two largest weights have tiny gradients,
+    # so magnitude keeps them while saliency (|w*g|) drops them.
+    w_vals = np.array([[1.0, 2.0, 3.0, 4.0]])
+    g_vals = np.array([[10.0, 4.0, 0.5, 0.1]])  # |w*g| = [10, 8, 1.5, 0.4]
+
+    w_mag = Parameter(w_vals.copy())
+    Pruner([w_mag]).prune_to(0.5, magnitude)
+
+    w_sal = Parameter(w_vals.copy())
+    w_sal.grad = g_vals.copy()
+    Pruner([w_sal]).prune_to(0.5, saliency)
+
+    # magnitude drops the two smallest |w|, keeping the two largest weights
+    assert np.allclose(w_mag.mask, [[0.0, 0.0, 1.0, 1.0]])
+    # saliency drops the two smallest |w*g| — the large-but-low-gradient connections
+    assert np.allclose(w_sal.mask, [[1.0, 1.0, 0.0, 0.0]])
+    # at the same budget the two criteria genuinely disagree
+    assert not np.array_equal(w_mag.mask, w_sal.mask)
