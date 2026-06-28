@@ -32,3 +32,36 @@ class SGD(Optimizer):
             # on them — otherwise stale velocity would walk them back off zero.
             p.apply_mask()
             v *= p.mask
+
+
+class Adam(Optimizer):
+    """Adam with bias-corrected moments; pruned connections carry no moment state."""
+
+    def __init__(self, params, lr=0.001, betas=(0.9, 0.999), eps=1e-8):
+        super().__init__(params)
+        self.lr = lr
+        self.beta1, self.beta2 = betas
+        self.eps = eps
+        self.m = [np.zeros_like(p.data) for p in self.params]  # first moment
+        self.v = [np.zeros_like(p.data) for p in self.params]  # second moment
+        self.t = 0  # global step, used for bias correction
+
+    def step(self):
+        self.t += 1
+        b1, b2 = self.beta1, self.beta2
+        # Bias correction: early moments start at zero and are biased small, so we
+        # divide by (1 - beta**t) to undo it — this makes the first step ~lr.
+        bias1 = 1.0 - b1 ** self.t
+        bias2 = 1.0 - b2 ** self.t
+        for p, m, v in zip(self.params, self.m, self.v):
+            g = p.grad
+            m *= b1
+            m += (1.0 - b1) * g
+            v *= b2
+            v += (1.0 - b2) * (g * g)
+            p.data -= self.lr * (m / bias1) / (np.sqrt(v / bias2) + self.eps)
+            # Dead connections: hard zero and no lingering moments, so a later
+            # revival would start cleanly rather than from a corrupt state.
+            p.apply_mask()
+            m *= p.mask
+            v *= p.mask
