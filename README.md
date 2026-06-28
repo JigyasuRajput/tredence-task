@@ -30,11 +30,9 @@ pip install -r requirements.txt
 
 ## Run
 
-_Commands are filled in as each part lands; for now:_
-
 ```bash
 uv run pytest    # the test suite (gradient checks live here)
 ```
 
-<!-- Run commands for Part 2 training, the self-pruning run, and the Pareto
-sweep are added as those checkpoints land. -->
+The training, self-pruning, and Pareto-sweep commands are documented alongside
+their code as each part lands.
