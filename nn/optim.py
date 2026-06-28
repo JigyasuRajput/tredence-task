@@ -33,6 +33,11 @@ class SGD(Optimizer):
             p.apply_mask()
             v *= p.mask
 
+    def reset_dead_state(self):
+        """Zero the velocity on currently-dead connections (e.g. right after regrowth)."""
+        for p, v in zip(self.params, self.velocity):
+            v *= p.mask
+
 
 class Adam(Optimizer):
     """Adam with bias-corrected moments; pruned connections carry no moment state."""
@@ -60,8 +65,14 @@ class Adam(Optimizer):
             v *= b2
             v += (1.0 - b2) * (g * g)
             p.data -= self.lr * (m / bias1) / (np.sqrt(v / bias2) + self.eps)
-            # Dead connections: hard zero and no lingering moments, so a later
-            # revival would start cleanly rather than from a corrupt state.
+            # Dead connections: hard zero and no lingering moments, so a revived
+            # connection starts cleanly rather than from a corrupt state.
             p.apply_mask()
+            m *= p.mask
+            v *= p.mask
+
+    def reset_dead_state(self):
+        """Zero both moments on currently-dead connections (e.g. right after regrowth)."""
+        for p, m, v in zip(self.params, self.m, self.v):
             m *= p.mask
             v *= p.mask

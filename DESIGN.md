@@ -35,8 +35,43 @@ a cubic ramp (`prune/schedule.py`) so the network can recover between cuts.
 
 ## 2. The gradient of a masked weight
 
-_What the engine computes as the gradient of a pruned weight, why that is the
-right choice, and how the revival signal is kept separate from the update._
+The forward pass uses the effective weight `eff = W ⊙ mask` (`Parameter.masked`).
+Backprop therefore gives
+
+```
+∂L/∂W = (∂L/∂eff) ⊙ mask.
+```
+
+So for a **live** connection (mask = 1) the gradient is the ordinary gradient, and
+for a **dead** connection (mask = 0) it is **exactly zero**. That is the right answer
+for the *update*: a pruned connection did not participate in the forward pass, so it
+should receive no gradient and the optimizer must not move it. This is what
+`weight.grad` holds, and it is the only thing the optimizer reads.
+
+**Two different gradients, kept separate.** There is a second, distinct quantity:
+
+1. **Update gradient** `∂L/∂W = (∂L/∂eff) ⊙ mask` — zero on dead connections. Drives
+   the optimizer. (`weight.grad`)
+2. **Would-be-dense gradient** `∂L/∂eff` — the gradient a connection *would* have
+   received if it were active, evaluated on the current sparse activations. Non-zero on
+   dead connections. Used **only** to decide which dead connections to revive.
+   (`weight.dense_grad()`, read from the `masked()` product's grad.)
+
+The optimizer never reads `dense_grad()`, so the revival signal can never move a pruned
+weight — dead weights stay frozen, and the would-be-dense gradient only informs
+*topology* changes (regrowth), never the *update*.
+
+**Optimizer state on revival.** Each optimizer step re-asserts the mask and multiplies
+the moment buffers by it (`reset_dead_state` does the same on demand after regrowth), so
+dead connections always carry zero momentum / zero Adam moments. A revived connection
+therefore starts from weight 0 **and** zero moments — a clean start. This is what avoids
+the classic failure mode: a stale, tiny second moment left in Adam's denominator would
+produce an enormous first step and destabilise training. We reuse Adam's **global**
+timestep `t` for bias correction rather than a per-connection local counter; this is
+simpler and standard, with the understood caveat that a revived connection's effective
+bias correction reflects the global step rather than a fresh `t = 1`. The resulting first
+step is bounded (we verify this in the tests), so the small difference is an acceptable
+trade for not carrying a per-connection step count.
 
 ## 3. Where the engine bottlenecks
 
