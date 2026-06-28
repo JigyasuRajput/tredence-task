@@ -33,6 +33,14 @@ over a full pass rather than one noisy minibatch, so the score is stable. Rankin
 **global** across layers (`prune/pruner.py`), and the budget is reached gradually via
 a cubic ramp (`prune/schedule.py`) so the network can recover between cuts.
 
+**A structural consequence.** Because the global ranking is unstructured (no
+per-neuron constraint), at very high sparsity it can leave whole hidden units with no
+surviving connections — measured ≈10/128 dead at 90% and ≈43/128 at 95% on this model.
+The forward stays correct (a dead unit just emits a bias-only activation) and no output
+*class* is ever left without incoming weights, but past ~90% this wastes capacity; a
+structured or per-layer budget (e.g. ERK allocation) is the lever if pushing sparsity
+higher.
+
 ## 2. The gradient of a masked weight
 
 The forward pass uses the effective weight `eff = W ⊙ mask` (`Parameter.masked`).

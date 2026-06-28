@@ -55,7 +55,9 @@ class Adam(Optimizer):
         self.t += 1
         b1, b2 = self.beta1, self.beta2
         # Bias correction: early moments start at zero and are biased small, so we
-        # divide by (1 - beta**t) to undo it — this makes the first step ~lr.
+        # divide by (1 - beta**t) to undo it — making a fresh optimizer's first step
+        # ~lr. A revived connection restarts its moments at 0 but reuses the global t,
+        # so its first step is a bounded ~2*lr (see DESIGN section 2), not lr.
         bias1 = 1.0 - b1 ** self.t
         bias2 = 1.0 - b2 ** self.t
         for p, m, v in zip(self.params, self.m, self.v):
