@@ -64,10 +64,11 @@ Digits, 64-128-10 MLP, mean ± std test accuracy over 5 seeds (`results/part4_pa
 
 **Falsifiable claim.** Saliency (|w·∂L/∂w|) pruning beats magnitude pruning at
 moderate sparsity (50–75%, ≈ +0.5 accuracy points) but the two **cross over**:
-at 95% sparsity magnitude wins by 0.95 ± 0.29 points (paired over 5 seeds, > 2
-standard errors, so not noise). So the gradient-based criterion helps until the
-budget gets tight, where the magnitude baseline is the stronger choice on this
-task. Re-running `train.pareto_run` reproduces these numbers exactly.
+at 95% sparsity magnitude wins by 0.95 points (paired over 5 seeds; standard error
+0.29 points, so the gap is over 2 standard errors and not noise). So the
+gradient-based criterion helps until the budget gets tight, where the magnitude
+baseline is the stronger choice on this task. Re-running `train.pareto_run`
+reproduces these numbers exactly.
 
 The cost is genuine, not dense-times-zero: at 90% sparsity the model keeps 947 of
 9,472 weights and the weight matmuls do 10× fewer multiply-adds — `active_params`,
