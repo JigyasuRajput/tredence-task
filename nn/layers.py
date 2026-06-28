@@ -4,6 +4,7 @@ import numpy as np
 
 from engine import Tensor
 
+from .init import init_weight
 from .parameter import Parameter
 
 
@@ -36,10 +37,9 @@ class Module:
 class Linear(Module):
     """Affine layer y = x @ W + b; the weight runs through its mask so pruning is real."""
 
-    def __init__(self, in_features, out_features, rng=None):
+    def __init__(self, in_features, out_features, rng=None, init="he"):
         rng = rng if rng is not None else np.random.default_rng()
-        scale = 1.0 / np.sqrt(in_features)
-        self.weight = Parameter(rng.standard_normal((in_features, out_features)) * scale)
+        self.weight = Parameter(init_weight(in_features, out_features, rng, init))
         self.bias = Parameter(np.zeros(out_features))
 
     def forward(self, x):
