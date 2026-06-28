@@ -81,6 +81,10 @@ bias correction reflects the global step rather than a fresh `t = 1`. The result
 step is bounded (we verify this in the tests), so the small difference is an acceptable
 trade for not carrying a per-connection step count.
 
+![The self-pruning training loop: the masked forward, the two gradients (update grad
+vs revival signal), and the points where masks flip and dead optimizer state is
+zeroed.](docs/pruning_loop.png)
+
 ## 3. Where the engine bottlenecks
 
 The engine is built for correctness and clarity, not throughput. The hot paths, and

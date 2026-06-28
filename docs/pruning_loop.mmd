@@ -1,0 +1,41 @@
+flowchart TD
+    A([train_pruned: for each epoch]) --> B[for each minibatch]
+
+    subgraph TRAIN["Per minibatch"]
+        direction TB
+        B --> C["Masked forward<br/>logits = x @ (W * M) + b<br/>(Parameter.masked builds W*M inside the graph)"]
+        C --> D["loss = softmax_cross_entropy(logits, y)"]
+        D --> E["loss.backward()"]
+        E --> F["UPDATE grad: w.grad = dL/d(W*M) * M<br/>exactly 0 on dead connections, used by the optimizer"]
+        E -. also computed .-> G["REVIVAL signal: dense_grad = dL/d(W*M)<br/>nonzero on dead; NOT read by train_pruned"]
+        F --> H["optimizer.step()"]
+        H --> H1["1: update moments from w.grad, then w.data -= lr * update"]
+        H1 --> H2["2: apply_mask -> w.data *= M   (MASK RE-ASSERTED)"]
+        H2 --> H3["3: m,v *= M (Adam) / velocity *= M (SGD)   (DEAD OPTIMIZER STATE ZEROED)"]
+    end
+
+    H3 --> I{more minibatches?}
+    I -- yes --> B
+    I -- no --> J{epoch < prune_window?}
+
+    subgraph PRUNE["End of epoch, only inside the pruning window"]
+        direction TB
+        J -- yes --> K["_full_batch_grads: one fwd+back over ALL train data<br/>refreshes w.grad as a stable saliency signal"]
+        K --> L["target = cubic_sparsity(epoch+1, prune_window, final_sparsity)"]
+        L --> M["pruner.prune_to(target, saliency)"]
+        M --> N["saliency = |w.data * w.grad|, global rank, keep the n largest"]
+        N --> O["set new w.mask, then apply_mask zeros newly-dead weights   (MASKS FLIP)"]
+    end
+
+    J -- no --> P
+    O --> P["record loss / test_acc / sparsity"]
+    P --> A
+
+    G -. regrowth path .-> R["(bonus, NOT in train_pruned)<br/>prune_and_grow grows dead conns by |dense_grad|;<br/>reset_dead_state -> revived weight and moments start at 0"]
+
+    classDef flip fill:#ffe6cc,stroke:#d79b00,color:#000;
+    classDef grad fill:#dae8fc,stroke:#6c8ebf,color:#000;
+    classDef sep fill:#f5f5f5,stroke:#999999,stroke-dasharray:4 3,color:#000;
+    class H2,H3,O flip;
+    class F,G grad;
+    class R sep;
