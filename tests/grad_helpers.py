@@ -1,24 +1,8 @@
-"""Finite-difference helpers shared by the op tests (central differences, float64)."""
+"""Per-op test helper that drives a single backward closure in isolation."""
 
 import numpy as np
 
-
-def numeric_grad(f, x, eps=1e-6):
-    """Central-difference gradient of scalar f at array x."""
-    x = np.array(x, dtype=np.float64)  # ensure a mutable ndarray, even for 0-d
-    grad = np.zeros_like(x)
-    it = np.nditer(x, flags=["multi_index"])
-    while not it.finished:
-        idx = it.multi_index
-        orig = x[idx]
-        x[idx] = orig + eps
-        plus = f(x)
-        x[idx] = orig - eps
-        minus = f(x)
-        x[idx] = orig
-        grad[idx] = (plus - minus) / (2 * eps)
-        it.iternext()
-    return grad
+from engine.gradcheck import numeric_gradient as numeric_grad
 
 
 def check_single_op(build, inputs, seed=0, atol=1e-6):
